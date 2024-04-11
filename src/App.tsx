@@ -19,6 +19,10 @@ export default function App() {
     setTasks((tarefas) => [...tarefas, input]);
     setInput("");
   }
+  function handleDelet(item: string) {
+    const removeTask = tasks.filter((task) => task !== item);
+    setTasks(removeTask);
+  }
 
   return (
     <div>
@@ -34,7 +38,7 @@ export default function App() {
       {tasks.map((item, index) => (
         <section key={item}>
           <span>{item}</span>
-          <button>Excluir</button>
+          <button onClick={() => handleDelet(item)}>Excluir</button>
         </section>
       ))}
     </div>
