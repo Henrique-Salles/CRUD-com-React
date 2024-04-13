@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function App() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const firstRender = useRef(true);
+
   const [input, setInput] = useState("");
   const [tasks, setTasks] = useState<string[]>([]);
   const [editTask, setEditTask] = useState({
@@ -15,6 +18,14 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    localStorage.setItem("@cursoreact", JSON.stringify(tasks));
+  }, [tasks]);
+
   function handleRegister() {
     if (!input) {
     }
@@ -25,20 +36,22 @@ export default function App() {
     }
     setTasks((tarefas) => [...tarefas, input]);
     setInput("");
-    localStorage.setItem("@cursoreact", JSON.stringify([...tasks, input]));
   }
+
   function handleDelet(item: string) {
     const removeTask = tasks.filter((task) => task !== item);
     setTasks(removeTask);
-    localStorage.setItem("@cursoreact", JSON.stringify(removeTask));
   }
+
   function handleEdit(item: string) {
     setInput(item);
     setEditTask({
       enabled: true,
       task: item,
     });
+    inputRef.current?.focus();
   }
+
   function handleSaveEdit() {
     const findIndexTask = tasks.findIndex((task) => task === editTask.task);
     const allTasks = [...tasks];
@@ -52,7 +65,6 @@ export default function App() {
     });
 
     setInput("");
-    localStorage.setItem("@cursoreact", JSON.stringify(allTasks));
   }
 
   return (
@@ -62,6 +74,7 @@ export default function App() {
         placeholder="Insira uma tarefa..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        ref={inputRef}
       />
       <button onClick={handleRegister}>
         {editTask.enabled ? "Atualizar Tarefa" : "Adicionar Tarefa"}
