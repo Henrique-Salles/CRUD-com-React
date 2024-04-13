@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 
 export default function App() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +67,10 @@ export default function App() {
     setInput("");
   }
 
+  const totalTarefas = useMemo(() => {
+    return tasks.length;
+  }, [tasks]);
+
   return (
     <div>
       <h1>Lista de Tarefas</h1>
@@ -80,6 +84,9 @@ export default function App() {
         {editTask.enabled ? "Atualizar Tarefa" : "Adicionar Tarefa"}
       </button>
       <hr />
+      <strong>Você tem {totalTarefas} tarefas!</strong>
+      <br />
+      <br />
 
       {tasks.map((item, index) => (
         <section key={item}>
