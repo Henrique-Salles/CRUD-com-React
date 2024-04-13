@@ -1,20 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function App() {
   const [input, setInput] = useState("");
-  const [tasks, setTasks] = useState([
-    "Estudar react com typescript",
-    "Assistir aulas da faculdade",
-    "Aulas de inglês com Duolingo",
-    "Procurar vagas de emprego ou estágio",
-    "Varrer a casa",
-    "Tirar o lixo",
-    "Ajudar no almoço",
-  ]);
+  const [tasks, setTasks] = useState<string[]>([]);
   const [editTask, setEditTask] = useState({
     enabled: false,
     task: "",
   });
+
+  useEffect(() => {
+    const tarefasSalvas = localStorage.getItem("@cursoreact");
+    if (tarefasSalvas) {
+      setTasks(JSON.parse(tarefasSalvas));
+    }
+  }, []);
 
   function handleRegister() {
     if (!input) {
@@ -26,10 +25,12 @@ export default function App() {
     }
     setTasks((tarefas) => [...tarefas, input]);
     setInput("");
+    localStorage.setItem("@cursoreact", JSON.stringify([...tasks, input]));
   }
   function handleDelet(item: string) {
     const removeTask = tasks.filter((task) => task !== item);
     setTasks(removeTask);
+    localStorage.setItem("@cursoreact", JSON.stringify(removeTask));
   }
   function handleEdit(item: string) {
     setInput(item);
@@ -51,6 +52,7 @@ export default function App() {
     });
 
     setInput("");
+    localStorage.setItem("@cursoreact", JSON.stringify(allTasks));
   }
 
   return (
